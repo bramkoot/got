@@ -227,7 +227,11 @@ const normalize = (url, options, defaults) => {
 				return 0;
 			}
 
-			if ((!error || !options.retry.errorCodes.has(error.code)) && (!options.retry.methods.has(error.method) || !options.retry.statusCodes.has(error.statusCode))) {
+			if (!options.retry.methods.has(error.method)) {
+				return 0;
+			}
+
+			if ((!error || !options.retry.errorCodes.has(error.code)) && !options.retry.statusCodes.has(error.statusCode)) {
 				return 0;
 			}
 

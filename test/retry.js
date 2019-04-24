@@ -6,6 +6,7 @@ import {createServer} from './helpers/server';
 
 let s;
 let trys = 0;
+let posts = 0;
 let knocks = 0;
 let fifth = 0;
 let lastTried413access = Date.now();
@@ -27,6 +28,11 @@ test.before('setup', async () => {
 
 	s.on('/try-me', () => {
 		trys++;
+	});
+
+	s.on('/try-post', () => {
+		console.log('posts');
+		posts++;
 	});
 
 	s.on('/fifth', (request, response) => {
@@ -292,4 +298,12 @@ test('retry function can throw', async t => {
 			}
 		}
 	}), error);
+});
+
+test('can be disabled by using a POST request', async t => {
+	const error = await t.throwsAsync(got.post(`${s.url}/try-post`, {
+		timeout: {socket: socketTimeout}
+	}));
+	t.truthy(error);
+	t.is(posts, 1);
 });
